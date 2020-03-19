@@ -1,0 +1,23 @@
+extends ../layouts/common.pug
+
+block content
+	a(href="/users/create") create new users
+
+	form(action="users/search", method="GET")
+		input(type="text" name="q")
+		button search
+
+	table.table
+		tr
+			th avatar
+			th name
+			th action
+
+		each user in users
+
+			tr
+				td 
+					img(src=user.avatar, width='64')
+				td= user.name
+				td
+					a(href="/users/" + user.id) view
