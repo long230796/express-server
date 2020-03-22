@@ -17,7 +17,11 @@ block content
 
 			tr
 				td 
-					img(src=user.avatar, width='64')
+					img.rounded-circle(src=user.avatar, width='64')
 				td= user.name
 				td
-					a(href="/users/" + user.id) view
+					if (user._id == cookie)
+						a(href="/users/status") Post Status now
+
+					else
+						a(href="#") view	

@@ -4,6 +4,31 @@ extends ./layouts/index.pug
 block content
  .display-flex.al-items-center
   h1.text-center welcome to J19 ROOM
-  h3.text-center.text-info
-   a.text-white(href='/auth/login') login 
-   | to use more action
+  h3.text-center.text-white
+   if (!cookie)
+    a.text-info(href='/auth/login') login 
+    | to use more action
+    
+ if (cookie)
+  if (status)   
+   each userStatus in status
+    .card.mt-3.d-flex(style='width: 60rem; background-color: #765b5b; margin: auto; display: flex; flex-direction: row')
+     .card-body(style="width: 100%; ")
+       .image-div(style="display: flex; flex-direction: row")
+        img.rounded-circle.mr-2(src=userStatus.avatar, width='45')
+        h4.text-info.card-title.d-block= userStatus.writer
+       p.card-text.ml-5= userStatus.status
+     .input-group.mb-3(style="justify-content: flex-end; align-items: flex-start; width: 40px")
+      .input-group-prepend
+        button.btn.btn-outline-secondary(type='button') Action
+        button.btn.btn-outline-secondary.dropdown-toggle.dropdown-toggle-split(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+         span.sr-only Toggle Dropdown
+        .dropdown-menu
+         if (userStatus.writerId == cookie)
+          a.dropdown-item(href='#') Edit
+          a.dropdown-item(href='#') Detele
+         else 
+          a.dropdown-item(href='#') send messages
+          .dropdown-divider(role='separator')
+          a.dropdown-item(href='#') more Action
+   

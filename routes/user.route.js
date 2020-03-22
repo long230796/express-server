@@ -19,7 +19,11 @@ router.get('/search', controller.getSearch)
 
 router.get('/create', controller.getCreate);
 
-router.get('/:id', controller.getId);
+// router.get('/:id', controller.getId);
+
+router.get('/status', controller.getStatus);
+
+router.post('/status', controller.postStatus);
 
 router.post('/create',
  upload.single('avatar'),

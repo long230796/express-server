@@ -1,4 +1,5 @@
 var express	= require('express');
+var indexRoute = require('./routes/index.route')
 var userRoute = require('./routes/user.route');
 var authRoute = require('./routes/auth.route');
 var sessionMiddleware = require('./middleware/session.middleware.js')
@@ -26,12 +27,13 @@ app.use(express.static('public'))
 app.use(sessionMiddleware)
 
 
-app.get('/', function(request, res) {
-	 res.render('index', {
-	 	name: 'room'
-	 });  /*path render(views), object*/
-});
+// app.get('/', function(req, res) {
+// 	 res.render('index', {
+// 	 	cookie: req.signedCookies.userId
+// 	 });  /*path render(views), object*/
+// });
 
+app.use('/', indexRoute)
 app.use('/users', userRoute);     /*nếu có yêu cầu nào đến '/users' thì check thằng userRoute*/
 app.use('/auth', authRoute);
 app.use('/transfer', transferRoute);

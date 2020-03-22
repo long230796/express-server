@@ -1,0 +1,8 @@
+extends ../layouts/common.pug
+
+block content
+ form(action="/users/status", method="POST", )
+  .form-group
+    label(for='exampleInputEmail1') status
+    input#exampleInputEmail1.form-control(type='text', aria-describedby='emailHelp', placeholder='Enter your text', name='status')
+  button.btn.btn-primary(type='submit') Submit

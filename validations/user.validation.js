@@ -7,6 +7,9 @@ module.exports.postCreate = function(req, res, next) {
 	if (!req.body.password)
 		errors.push('phone is require')
 
+	if (!req.body.avatar)
+		errors.push('avatar is require')
+
 	if (errors.length) {
 		res.render('users/create', {
 			errors: errors,

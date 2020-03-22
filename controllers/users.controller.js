@@ -1,10 +1,13 @@
 var User = require('../models/user.model.js')
+var Status = require('../models/userStatus.model.js')
 var shortid = require('shortid')
 
 module.exports.getIndex = async function(req, res) {
+	var cookies = req.signedCookies.userId
 	var users = await User.find()  // tim trong database neu co du lieu thi render + users
 		res.render("users/index", {
-			users: users
+			users: users,
+			cookie: cookies
 		});
 	// User.find(function(err, users) {
 	// 	if (err) return console.log(err);
@@ -30,14 +33,14 @@ module.exports.getCreate = function(req, res) {
 	res.render('users/create')
 };
 
-module.exports.getId = async function(req, res) {
-	var id = req.params.id;	
+// module.exports.getId = async function(req, res) {
+// 	var id = req.params.id;	
 
-	var users = await User.find({ id: id })  // tim trong database neu co du lieu thi render + users
-		res.render('users/view', {
-			users: users
-		});
-};
+// 	var users = await User.find({ id: id })  // tim trong database neu co du lieu thi render + users
+// 		res.render('users/view', {
+// 			users: users
+// 		});
+// };
 
 module.exports.postCreate = function(req, res) {  	/*khi nhap vao create client send post request*/
 	req.body.avatar = req.file.path.split('/').slice(1).join('/');
@@ -51,4 +54,25 @@ module.exports.postCreate = function(req, res) {  	/*khi nhap vao create client 
 	res.redirect('/auth/login');
 	
 };
+
+module.exports.getStatus = async function(req, res) {
+	res.render('users/status')
+}
+
+module.exports.postStatus = async function(req, res) {
+	var userId = req.signedCookies.userId;
+	var user = await User.find({ _id: userId });
+	req.body.avatar = user[0].avatar
+	req.body.writer = user[0].name;
+	req.body.writerId = user[0]._id
+
+	var status = new Status(req.body);
+
+	status.save(function(err, status) {
+			if (err) return console.log(err);
+			console.log(status.status + " saved to status collection.");
+	})
+	res.redirect('/')
+
+}
 
