@@ -1,17 +1,17 @@
 extends ../layouts/common.pug
 
 block content
-	a(href="/users/create") create new users
+	//- a(href="/users/create") create new users
 
-	form(action="users/search", method="GET")
-		input(type="text" name="q")
-		button search
+	//- form(action="users/search", method="GET")
+	//- 	input(type="text" name="q")
+	//- 	button search
 
-	table.table
+	table.table.table-striped.table-dark
 		tr
-			th avatar
-			th name
-			th action
+			th(scope='col') avatar
+			th(scope='col') name
+			th(scope='col') action
 
 		each user in users
 

@@ -1,8 +1,9 @@
-extends ./layouts/common.pug
+
+extends ./layouts/index.pug
 
 block content
-		
-	h1 j19 #{name}
-
-		
-	a(href="/users") User List
+ .display-flex.al-items-center
+  h1.text-center welcome to J19 ROOM
+  h3.text-center.text-info
+   a.text-white(href='/auth/login') login 
+   | to use more action
