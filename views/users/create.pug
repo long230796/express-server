@@ -7,7 +7,7 @@ block content
 		each error in errors
 			.alert.alert-danger= error
 
-	form.m-auto(action='users/create', method='POST', enctype="multipart/form-data", style="width: 50%")
+	form.m-auto(action='/users/create', method='POST', enctype="multipart/form-data", style="width: 50%")
 		h2 REGISTER
 		.form-group
 			label(for='exampleInputEmail1') name

@@ -2,33 +2,54 @@
 extends ./layouts/index.pug
 
 block content
- .display-flex.al-items-center
-  h1.text-center welcome to J19 ROOM
-  h3.text-center.text-white
-   if (!cookie)
+ if (!cookie)
+  .display-flex.al-items-center
+   h1.text-center welcome to J19 ROOM
+   h3.text-center.text-white
     a.text-info(href='/auth/login') login 
     | to use more action
-    
+ else
+  h1.text-center Room Chat 
+  h3.text-center.text-white Add your status 
+    a.text-info(href='/users') HERE 
  if (cookie)
   if (status)   
    each userStatus in status
-    .card.mt-3.d-flex(style='width: 60rem; background-color: #765b5b; margin: auto; display: flex; flex-direction: row')
-     .card-body(style="width: 100%; ")
-       .image-div(style="display: flex; flex-direction: row")
+    .card.mt-3.d-flex(style='width: 80%; background-color: #765b5b; margin: auto; display: flex; flex-direction: row')
+     .card-body
+       .image-div(style="display: flex; flex-direction: row; align-items: center")
         img.rounded-circle.mr-2(src=userStatus.avatar, width='45')
         h4.text-info.card-title.d-block= userStatus.writer
-       p.card-text.ml-5= userStatus.status
+        .content-text
+         p.card-text.ml-5= userStatus.status
+         form(id=userStatus._id, action="users/newStatus", method="post", style="display: none")
+          input.form-control.ml-5(type='text', value=userStatus.status, name="newStatus")
+          button.btn.btn-info(type='submit') Submit
      .input-group.mb-3(style="justify-content: flex-end; align-items: flex-start; width: 40px")
       .input-group-prepend
-        button.btn.btn-outline-secondary(type='button') Action
-        button.btn.btn-outline-secondary.dropdown-toggle.dropdown-toggle-split(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+        button.btn.btn-outline-info(type='button') Action
+        button.btn.btn-outline-info.dropdown-toggle.dropdown-toggle-split(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
          span.sr-only Toggle Dropdown
         .dropdown-menu
          if (userStatus.writerId == cookie)
-          a.dropdown-item(href='#') Edit
-          a.dropdown-item(href='#') Detele
+          button.dropdown-item.edit-btn(data-id=userStatus._id) Edit
+          button.dropdown-item.delete-btn(data-id=userStatus._id) Detele
          else 
-          a.dropdown-item(href='#') send messages
+          button.dropdown-item(href='#') send messages
           .dropdown-divider(role='separator')
-          a.dropdown-item(href='#') more Action
-   
+          button.dropdown-item(href='#') Comment
+
+    script(type='text/javascript').
+
+     var editBtn = document.getElementsByClassName('edit-btn');
+     var deleteBtn = document.getElementsByClassName('delete-btn');
+
+     for (var i = 0 ; i < editBtn.length; i++) {
+       editBtn[i].addEventListener('click' , Edit) ; 
+     }
+
+     function Edit(event) {
+      var button = event.target;
+      var id = button.dataset.id;
+      document.getElementById(id).style.display="flex";
+     }

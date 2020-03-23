@@ -31,4 +31,6 @@ router.post('/create',
  controller.postCreate
 );
 
+router.post('/newStatus', controller.postNewStatus)
+
 module.exports = router;

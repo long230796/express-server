@@ -56,7 +56,13 @@ module.exports.postCreate = function(req, res) {  	/*khi nhap vao create client 
 };
 
 module.exports.getStatus = async function(req, res) {
-	res.render('users/status')
+	var cookies = req.signedCookies.userId
+	var writer = await Status.find({ writerId: cookies });
+	var status = writer[0].status
+	res.render('users/status', {
+		status: status,
+		cookie: cookies
+	})
 }
 
 module.exports.postStatus = async function(req, res) {
@@ -74,5 +80,15 @@ module.exports.postStatus = async function(req, res) {
 	})
 	res.redirect('/')
 
+}
+
+module.exports.postNewStatus = async function(req, res) {
+	var cookie = req.signedCookies.userId
+	var writer = await Status.findOne({writerId: cookie});
+	var newStatus = {status: req.body.newStatus}
+
+	await writer.updateOne(newStatus)
+
+	res.redirect('/');
 }
 
