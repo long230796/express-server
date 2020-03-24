@@ -2,30 +2,73 @@
 extends ./layouts/index.pug
 
 block content
- if (!cookie)
-  .display-flex.al-items-center
-   h1.text-center welcome to J19 ROOM
-   h3.text-center.text-white
-    a.text-info(href='/auth/login') login 
-    | to use more action
- else
   h1.text-center Room Chat 
   h3.text-center.text-white Add your status 
-    a.text-info(href='/users') HERE 
- if (cookie)
+    button.btn.btn-info.addStatus(onclick="Status()", type="button") HERE 
+  
+
+  form.m-auto(id="formStatus", action="/users/status", method="POST", style="width: 50%;align-items: center; display: none",)
+   .form-group.m-0(style="flex-grow: 1; align-items: center ")
+    if (!cookie) 
+     .alert.alert-danger.m-auto(id="errCookie", style="display: flex; width: 50%; justify-content: center")
+      a.mr-1(href="auth/login", style="") LOGIN   
+      | to use this Action
+    else  
+     input.form-control.mb-3(type='text',aria-describedby='emailHelp',  placeholder='Enter your status', name='status')
+     button.btn.btn-primary(type='submit', ) Submit
+     button.btn.btn-primary.ml-1(onclick="cancelStatus()",type='button', ) Cancel
+
   if (status)   
    each userStatus in status
+     
+    if (!cookie)
+     .alert.alert-danger.m-auto(id="errCookie", style="display: none; width: 50%; justify-content: center")
+      a.mr-1(href="auth/login", style="") LOGIN   
+      | to use this Action  
+
     .card.mt-3.d-flex(style='width: 80%; background-color: #765b5b; margin: auto; display: flex; flex-direction: row')
-     .card-body
-       .image-div(style="display: flex; flex-direction: row; align-items: center")
-        img.rounded-circle.mr-2(src=userStatus.avatar, width='45')
-        h4.text-info.card-title.d-block= userStatus.writer
-        .content-text
-         p.card-text.ml-5= userStatus.status
-         form(id=userStatus._id, action="users/newStatus", method="post", style="display: none")
-          input.form-control.ml-5(type='text', value=userStatus.status, name="newStatus")
-          button.btn.btn-info(type='submit') Submit
-     .input-group.mb-3(style="justify-content: flex-end; align-items: flex-start; width: 40px")
+     .card-body(style="")
+       .image-div(style="display: flex; flex-direction: row; align-items: start;",)
+        .avatar-writer.d-flex(style="width: 25%; flex-direction: row")
+         img.rounded-circle.mr-2(src=userStatus.avatar, width='45')
+         h3.text-info.card-title.d-block= userStatus.writer
+        .content-text.align-items-center.ml-5(style="flex-grow: 1;")
+         p.card-text(style="font-size: 20px; font-weight: bold; width: 300px")= userStatus.status
+        .date-time(style="")
+         p.card-text(style="font-size: 16px; ")= userStatus.time
+         p.card-text(style="font-size: 16px; ")= userStatus.date
+         .comment-div.d-flex(style="flex-direction: column")
+
+       each subComment in userStatus.comment
+        .comment-content.d-flex.m-auto(style="flex-direction: row;align-items:center")
+         .commenter.d-flex(style="flex-grow: 1; margin-left: 12rem")
+          img.rounded-circle.mr-2.d-flex(src=subComment.avatar, width='35')
+          h4.text-info.card-title.d-block.m-0(style="font-size: 15px")= subComment.sender + ":"
+          p.card-text.ml-3.mb-0(style="color: #9c9b99; flex-grow: 1")= subComment.comment
+         .day-time.d-flex(style="align-items: center")
+          p.card-text.ml-3.mb-0(style="color: #9c9b99")= subComment.time
+          p.card-text.ml-3(style="color: #9c9b99")= subComment.day
+
+       form.mt-2(id=userStatus._id, action="users/newStatus", method="post", style="display: none")
+        input.form-control(style="margin-left: 12rem", type='text', value=userStatus.status, name="newStatus")
+        button.btn.btn-info.ml-1(type='submit') Submit
+        button.btn.btn-info.closeBtn.ml-1(type='button',data-id=userStatus._id) close
+
+       form.mt-2(id=userStatus._id+"formAlert", action="users/delStatus", method="post", style="display: none")
+        .alert.alert-danger(role='alert', style="margin-left: 12rem")
+         | you want detele ?
+         input(name="hostId", value=userStatus._id, style="display: none")
+         button.btn.btn-info.accept-del.ml-2(type='submit') Yes
+          button.btn.btn-info.refuse-del.ml-1(type='button', data-id=userStatus._id+"formAlert") No
+       
+       form.mt-2(id=userStatus._id + "formComment", action="users/comment", method="post", style="display: none")
+        input.form-control(style="margin-left: 12rem",type='text', placeholder="Enter your comment", name="comment")
+        input(name="hostId", value=userStatus._id, style="display: none")
+        if (cookie)  
+         button.btn.btn-info.ml-1(type='submit') Submit
+        button.btn.btn-info.cancelComment.ml-1(type='button',data-id=userStatus._id + "formComment") Cancel
+         
+     .input-group.mb-3(style="justify-content: flex-end; align-items: flex-start; width: 10%")
       .input-group-prepend
         button.btn.btn-outline-info(type='button') Action
         button.btn.btn-outline-info.dropdown-toggle.dropdown-toggle-split(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
@@ -33,23 +76,81 @@ block content
         .dropdown-menu
          if (userStatus.writerId == cookie)
           button.dropdown-item.edit-btn(data-id=userStatus._id) Edit
-          button.dropdown-item.delete-btn(data-id=userStatus._id) Detele
+          button.dropdown-item.delete-btn(data-id=userStatus._id + "formAlert") Detele
          else 
           button.dropdown-item(href='#') send messages
           .dropdown-divider(role='separator')
-          button.dropdown-item(href='#') Comment
+          button.dropdown-item.comment-btn(data-id=userStatus._id + "formComment") Comment
 
-    script(type='text/javascript').
+  script(type='text/javascript').
 
-     var editBtn = document.getElementsByClassName('edit-btn');
-     var deleteBtn = document.getElementsByClassName('delete-btn');
+   var editBtn = document.getElementsByClassName('edit-btn');
+   var deleteBtn = document.getElementsByClassName('delete-btn');
+   var noBtn = document.getElementsByClassName('refuse-del');
+   var closeBtn = document.getElementsByClassName('closeBtn');
+   var commentBtn = document.getElementsByClassName('comment-btn')
+   var cancelBtn = document.getElementsByClassName('cancelComment')
 
-     for (var i = 0 ; i < editBtn.length; i++) {
-       editBtn[i].addEventListener('click' , Edit) ; 
-     }
 
-     function Edit(event) {
-      var button = event.target;
-      var id = button.dataset.id;
-      document.getElementById(id).style.display="flex";
-     }
+   for (var i = 0 ; i < editBtn.length; i++) {
+     editBtn[i].addEventListener('click' , Edit) ; 
+     deleteBtn[i].addEventListener('click' , Delete) ; 
+   }
+   for (var i = 0 ; i < noBtn.length; i++) { 
+     noBtn[i].addEventListener('click' , refuseDel); 
+   }
+
+   for (var i = 0 ; i < closeBtn.length; i++) { 
+     closeBtn[i].addEventListener('click' , CloseBtn); 
+   }
+
+   for (var i = 0 ; i < commentBtn.length; i++) { 
+     commentBtn[i].addEventListener('click' , Comment); 
+     cancelBtn[i].addEventListener('click' , cancelComment); 
+   }
+
+   function Status() {
+    document.getElementById('formStatus').style.display="flex";
+   }
+   
+   function cancelStatus() {
+    document.getElementById('formStatus').style.display="none";
+   }
+
+   function Edit(event) {
+    var button = event.target;
+    var id = button.dataset.id;
+    document.getElementById(id).style.display="flex";
+   }
+
+   function CloseBtn(event) {
+    var button = event.target;
+    var id = button.dataset.id;
+    document.getElementById(id).style.display="none";
+   }     
+
+   function Delete(event) {
+    var button = event.target;
+    var id = button.dataset.id
+    document.getElementById(id).style.display="flex";
+   }
+
+   function refuseDel(event) {
+    var button = event.target
+    var id = button.dataset.id
+    document.getElementById(id).style.display="none";
+   }
+
+   function Comment(event) {
+     var button = event.target
+     var id = button.dataset.id
+     document.getElementById(id).style.display="flex";
+
+     document.getElementById("errCookie").style.display="flex";
+   }
+
+   function cancelComment(event) {
+    var button = event.target
+    var id = button.dataset.id
+    document.getElementById(id).style.display="none";
+   }

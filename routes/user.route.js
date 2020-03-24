@@ -23,7 +23,9 @@ router.get('/create', controller.getCreate);
 
 router.get('/status', controller.getStatus);
 
-router.post('/status', controller.postStatus);
+router.post('/status',
+ controller.postStatus
+);
 
 router.post('/create',
  upload.single('avatar'),
@@ -32,5 +34,8 @@ router.post('/create',
 );
 
 router.post('/newStatus', controller.postNewStatus)
+router.post('/delStatus', controller.delStatus)
+router.post('/comment', controller.comment)
+
 
 module.exports = router;

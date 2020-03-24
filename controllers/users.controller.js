@@ -56,21 +56,21 @@ module.exports.postCreate = function(req, res) {  	/*khi nhap vao create client 
 };
 
 module.exports.getStatus = async function(req, res) {
-	var cookies = req.signedCookies.userId
-	var writer = await Status.find({ writerId: cookies });
-	var status = writer[0].status
-	res.render('users/status', {
-		status: status,
-		cookie: cookies
-	})
+	// var cookies = req.signedCookies.userId
+	// var writer = await Status.find({ writerId: cookies });
+	// var status = writer[0].status
+	res.render('users/status')
 }
 
 module.exports.postStatus = async function(req, res) {
+	var d = new Date();
 	var userId = req.signedCookies.userId;
 	var user = await User.find({ _id: userId });
 	req.body.avatar = user[0].avatar
 	req.body.writer = user[0].name;
 	req.body.writerId = user[0]._id
+	req.body.date = d.getDate() + "/" + d.getMonth() + "/" + d.getFullYear(),
+	req.body.time = d.getHours() + ":" + d.getMinutes()
 
 	var status = new Status(req.body);
 
@@ -91,4 +91,45 @@ module.exports.postNewStatus = async function(req, res) {
 
 	res.redirect('/');
 }
+
+module.exports.delStatus = async function(req, res) {
+	if (!req.signedCookies.userId) return
+	var hostId = req.body.hostId
+	var writer = await Status.findOne({_id: hostId});
+
+	await writer.deleteOne()
+
+	res.redirect('/');
+}
+
+module.exports.comment = async function(req, res) {
+
+	var cookie = req.signedCookies.userId
+	if (!cookie) {
+		res.redirect('/')
+		return
+	}
+	var hostId = req.body.hostId
+	var sender = await User.find({_id: cookie})
+	var senderName = sender[0].name;
+	var senderAvatar = sender[0].avatar;
+	var d = new Date();
+
+
+	var ownerComment = await Status.findOne({ _id: hostId });
+	ownerComment.comment.push({
+		comment: req.body.comment,
+		sender: senderName,
+		avatar: senderAvatar,
+		day: d.getDate() + "/" + d.getMonth() + "/" + d.getFullYear(),
+		time: d.getHours() + ":" + d.getMinutes()
+	});
+
+	ownerComment.save();
+
+	res.redirect("/")
+
+}
+
+
 

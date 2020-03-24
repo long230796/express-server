@@ -59,7 +59,7 @@ var users = await User.find({ name: name });
 			res.cookie('userId', user._id, {
 				signed: true
 			});
-			res.redirect('/users');
+			res.redirect('/');
 			return
 		} 
 	}
