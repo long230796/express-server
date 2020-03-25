@@ -7,7 +7,7 @@ block content
     button.btn.btn-info.addStatus(onclick="Status()", type="button") HERE 
   
 
-  form.m-auto(id="formStatus", action="/users/status", method="POST", style="width: 50%;align-items: center; display: none",)
+  form.m-auto(id="formStatus", action="/users/status", method="POST", style="width: 50%;align-items: center; display: none", enctype="multipart/form-data" )
    .form-group.m-0(style="flex-grow: 1; align-items: center ")
     if (!cookie) 
      .alert.alert-danger.m-auto(id="errCookie", style="display: flex; width: 50%; justify-content: center")
@@ -15,6 +15,11 @@ block content
       | to use this Action
     else  
      input.form-control.mb-3(type='text',aria-describedby='emailHelp',  placeholder='Enter your status', name='status')
+     input.form-control.mb-3(type='text',aria-describedby='emailHelp',  placeholder='Past Your Link Here', name='link')
+     label(for='image') upload image
+     input#image.form-control-file(type="file", name="statusUpload")
+     label(for='video') upload video
+     input#video.form-control-file.mb-3(type="file", name="statusUpload")
      button.btn.btn-primary(type='submit', ) Submit
      button.btn.btn-primary.ml-1(onclick="cancelStatus()",type='button', ) Cancel
 
@@ -32,20 +37,30 @@ block content
         .avatar-writer.d-flex(style="width: 25%; flex-direction: row")
          img.rounded-circle.mr-2(src=userStatus.avatar, width='45')
          h3.text-info.card-title.d-block= userStatus.writer
-        .content-text.align-items-center.ml-5(style="flex-grow: 1;")
+
+        .content-text.align-items-center.ml-5(style="flex-grow: 1; max-width: 100%")
          p.card-text(style="font-size: 20px; font-weight: bold; width: 300px")= userStatus.status
-        .date-time(style="")
+         each file in userStatus.file
+          if(file.video)
+           video.embed-responsive(style="max-width: 90%; height: auto", controls='')
+            source(src=file.video, type='video/mp4')
+            |   Your browser does not support the video tag.
+          if(file.image)   
+           img.mb-3(src=file.image, style="max-width: 90%;")
+
+        .date-time.ml-5.f-flex(style="flex-direction: row; max-width: 100px")
          p.card-text(style="font-size: 16px; ")= userStatus.time
          p.card-text(style="font-size: 16px; ")= userStatus.date
          .comment-div.d-flex(style="flex-direction: column")
 
        each subComment in userStatus.comment
         .comment-content.d-flex.m-auto(style="flex-direction: row;align-items:center")
-         .commenter.d-flex(style="flex-grow: 1; margin-left: 12rem")
-          img.rounded-circle.mr-2.d-flex(src=subComment.avatar, width='35')
-          h4.text-info.card-title.d-block.m-0(style="font-size: 15px")= subComment.sender + ":"
+         .commenter.d-flex.mt-3(style="flex-grow: 1; margin-left: 12rem; align-items: center")
+          .image-control.d-flex(style="align-items: center")
+           img.rounded-circle.mr-2(src=subComment.avatar, width='35')
+          h4.text-info.card-title.m-0(style="font-size: 15px; align-items: center; max-width: 120px")= subComment.sender + ":"
           p.card-text.ml-3.mb-0(style="color: #9c9b99; flex-grow: 1")= subComment.comment
-         .day-time.d-flex(style="align-items: center")
+         .day-time.d-flex.mt-4(style="align-items: center")
           p.card-text.ml-3.mb-0(style="color: #9c9b99")= subComment.time
           p.card-text.ml-3(style="color: #9c9b99")= subComment.day
 

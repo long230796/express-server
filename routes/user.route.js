@@ -7,6 +7,7 @@ var authMiddleware = require('../middleware/auth.middleware.js')
 
 
 var upload = multer({ dest: './public/uploads/'});
+var statusUpload = multer({ dest: './public/statusUploads/'});
 
 router.get('/', authMiddleware.requireAuth, controller.getIndex)
 
@@ -24,6 +25,7 @@ router.get('/create', controller.getCreate);
 router.get('/status', controller.getStatus);
 
 router.post('/status',
+ statusUpload.array('statusUpload', 12),
  controller.postStatus
 );
 

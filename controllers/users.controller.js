@@ -63,6 +63,37 @@ module.exports.getStatus = async function(req, res) {
 }
 
 module.exports.postStatus = async function(req, res) {
+	var	imagePath 
+	var	videoPath 
+	var uploads = req.files;
+
+	for (var upload of uploads ) {
+		if (upload.mimetype == "video/mp4") {
+			videoPath = upload.path.split('/').slice(1).join('/')
+		} else {
+			imagePath = upload.path.split('/').slice(1).join('/')
+		}
+	}	
+
+
+	// if (req.files.length == 1) {
+	// 	if(req.files[0].mimetype == "video/mp4"){
+	// 		videoPath = req.files[0].path.split('/').slice(1).join('/');
+	// 	} else 
+	// 		imagePath= req.files[0].path.split('/').slice(1).join('/');
+	// } else if (req.files.length == 2) {
+	// 	if(req.files[0].mimetype == "video/mp4"){
+	// 		videoPath = req.files[0].path.split('/').slice(1).join('/');
+	// 	} else 
+	// 		imagePath= req.files[0].path.split('/').slice(1).join('/');
+	// 	if(req.files[1].mimetype == "video/mp4"){
+	// 		videoPath = req.files[1].path.split('/').slice(1).join('/');
+	// 	} else 
+	// 		imagePath= req.files[1].path.split('/').slice(1).join('/');
+		
+	//   }
+	
+
 	var d = new Date();
 	var userId = req.signedCookies.userId;
 	var user = await User.find({ _id: userId });
@@ -73,6 +104,16 @@ module.exports.postStatus = async function(req, res) {
 	req.body.time = d.getHours() + ":" + d.getMinutes()
 
 	var status = new Status(req.body);
+	if (imagePath) {
+      status.file.push({
+      	image: imagePath
+      })
+	} 
+	if (videoPath) {
+	  status.file.push({
+      	video: videoPath
+      })
+	}
 
 	status.save(function(err, status) {
 			if (err) return console.log(err);
