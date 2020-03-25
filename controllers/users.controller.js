@@ -75,35 +75,22 @@ module.exports.postStatus = async function(req, res) {
 		}
 	}	
 
-
-	// if (req.files.length == 1) {
-	// 	if(req.files[0].mimetype == "video/mp4"){
-	// 		videoPath = req.files[0].path.split('/').slice(1).join('/');
-	// 	} else 
-	// 		imagePath= req.files[0].path.split('/').slice(1).join('/');
-	// } else if (req.files.length == 2) {
-	// 	if(req.files[0].mimetype == "video/mp4"){
-	// 		videoPath = req.files[0].path.split('/').slice(1).join('/');
-	// 	} else 
-	// 		imagePath= req.files[0].path.split('/').slice(1).join('/');
-	// 	if(req.files[1].mimetype == "video/mp4"){
-	// 		videoPath = req.files[1].path.split('/').slice(1).join('/');
-	// 	} else 
-	// 		imagePath= req.files[1].path.split('/').slice(1).join('/');
-		
-	//   }
-	
-
 	var d = new Date();
 	var userId = req.signedCookies.userId;
 	var user = await User.find({ _id: userId });
-	req.body.avatar = user[0].avatar
-	req.body.writer = user[0].name;
-	req.body.writerId = user[0]._id
-	req.body.date = d.getDate() + "/" + d.getMonth() + "/" + d.getFullYear(),
-	req.body.time = d.getHours() + ":" + d.getMinutes()
-
-	var status = new Status(req.body);
+	var link = req.body.link
+	var filterLink = "https://www.youtube.com/embed/" + link.split("=").slice(1).join('')
+	var reqBody = {
+		avatar: user[0].avatar,
+		writer: user[0].name,
+		writerId: user[0]._id,
+		status: req.body.status,
+		date: d.getDate() + "/" + d.getMonth() + "/" + d.getFullYear(),
+		time: d.getHours() + ":" + d.getMinutes(),
+		link: filterLink
+	}
+	
+	var status = new Status(reqBody);
 	if (imagePath) {
       status.file.push({
       	image: imagePath
@@ -115,10 +102,7 @@ module.exports.postStatus = async function(req, res) {
       })
 	}
 
-	status.save(function(err, status) {
-			if (err) return console.log(err);
-			console.log(status.status + " saved to status collection.");
-	})
+	status.save()
 	res.redirect('/')
 
 }

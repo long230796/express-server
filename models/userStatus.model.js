@@ -9,7 +9,8 @@ var userStatusSchema = new mongoose.Schema({
 	comment: Array,
 	file: Array,
 	time: String,
-	date: String
+	date: String,
+	link: String
 
 });
 

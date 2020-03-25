@@ -34,12 +34,15 @@ block content
     .card.mt-3.d-flex(style='width: 80%; background-color: #765b5b; margin: auto; display: flex; flex-direction: row')
      .card-body(style="")
        .image-div(style="display: flex; flex-direction: row; align-items: start;",)
-        .avatar-writer.d-flex(style="width: 25%; flex-direction: row")
+        .avatar-writer.d-flex(style="height: 100%; flex-direction: row; align-items: center")
          img.rounded-circle.mr-2(src=userStatus.avatar, width='45')
-         h3.text-info.card-title.d-block= userStatus.writer
+         h3.text-info.card-title.d-block(style="width: 150px")= userStatus.writer
 
         .content-text.align-items-center.ml-5(style="flex-grow: 1; max-width: 100%")
          p.card-text(style="font-size: 20px; font-weight: bold; width: 300px")= userStatus.status
+         if(userStatus.link)
+           .embed-responsive.embed-responsive-16by9.mb-3(style="max-width: 90%; height: auto")
+             iframe(width='560', height='315', src=userStatus.link, frameborder='0', allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture', allowfullscreen='')
          each file in userStatus.file
           if(file.video)
            video.embed-responsive(style="max-width: 90%; height: auto", controls='')
@@ -70,7 +73,7 @@ block content
         button.btn.btn-info.closeBtn.ml-1(type='button',data-id=userStatus._id) close
 
        form.mt-2(id=userStatus._id+"formAlert", action="users/delStatus", method="post", style="display: none")
-        .alert.alert-danger(role='alert', style="margin-left: 12rem")
+        .alert.alert-danger(role='alert', style="margin-left: 15.5rem")
          | you want detele ?
          input(name="hostId", value=userStatus._id, style="display: none")
          button.btn.btn-info.accept-del.ml-2(type='submit') Yes
